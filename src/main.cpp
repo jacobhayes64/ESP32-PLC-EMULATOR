@@ -24,7 +24,6 @@ bool outputState[4];
 void logicsolve(void);
 void inputscan(int[]);
 void outputscan(int[]);
-void test(int,int);
 
 class tag{
   public:
@@ -37,6 +36,9 @@ class tag{
 
 };
 
+void testPopulateTag(tag*);
+void printTag(vector<tag>,int);
+
 class rungcontext{
   public:
   bool rungPower;
@@ -45,17 +47,17 @@ class rungcontext{
 
 };
 
-class XIO {
-  public:
-  int tagindex;
-  bool state;
+// class XIO {
+//   public:
+//   int tagindex;
+//   bool state;
 
-  bool eval(rungcontext& rung){
-    if(this->state==0){
-      rung.rungPower = 1;
-    }else{rung.rungPower = 0;}
-    }
-};
+//   bool eval(rungcontext& rung){
+//     if(this->state==0){
+//       rung.rungPower = 1;
+//     }else{rung.rungPower = 0;}
+//     }
+// };
 
 // class XIC {
 //   public:
@@ -68,19 +70,23 @@ class XIO {
 //     }
 // };
 
-class OTE {
-  public:
-  int tag;
+// class OTE {
+//   public:
+//   int tag;
 
-  bool eval(rungcontext rung){
-  if(rung.rungPower=1){
-    this->tag=1;
-  }else{this->tag=0;}
-    }
-};
+//   bool eval(rungcontext rung){
+//   if(rung.rungPower=1){
+//     this->tag=1;
+//   }else{this->tag=0;}
+//     }
+// };
 
 
 void setup() {
+Serial.begin(115200);
+void testPopulateTag(tag*);
+void printTag(vector<tag>,int);
+
   rungcontext rung0;
   pinMode(LED_BUILTIN, OUTPUT);
   pinMode(INPUT_PIN1, INPUT);
@@ -92,12 +98,12 @@ void setup() {
   pinMode(OUTPUT_PIN2, OUTPUT);
   pinMode(OUTPUT_PIN3, OUTPUT);
   pinMode(OUTPUT_PIN4, OUTPUT);
-  
+  Serial.print("Startup");
   vector<tag> tagDB;
   tag T0;
   testPopulateTag(&T0);
   tagDB.push_back(T0);
-
+  printTag(tagDB, 0);
 }
 
 void loop() {
@@ -110,10 +116,10 @@ void inputscan(int pins[]){
 for(int i=0; i<4; i++){
   if(digitalRead(pins[i])==HIGH){
     inputState[i]=1;
-    printf("\nSet Input %d State to HIGH", i);
+   // printf("\nSet Input %d State to HIGH", i);
   }else{
     inputState[i]=0;
-    printf("\nSet Input %d State to LOW", i);
+    //printf("\nSet Input %d State to LOW", i);
   }
 
 }
@@ -124,10 +130,10 @@ void outputscan(int pins[]){
 for(int i=0; i<4; i++){
   if(outputState[i]==1){
     digitalWrite(pins[i], HIGH);
-    printf("\nSet Output %d State to HIGH", i);
+   // printf("\nSet Output %d State to HIGH", i);
   }else{
     digitalWrite(pins[i],LOW);
-    printf("\nSet Output %d State to LOW", i);
+   // printf("\nSet Output %d State to LOW", i);
   }
 
 }
@@ -138,9 +144,11 @@ void testPopulateTag(tag *t){
   strcpy(t->name, "Testing Name");
   strcpy(t->type, "BOOL");
   t->boolValue = 1;
-
-
-
 }
 
+
+
+void printTag(vector<tag> tagDB, int index){
+Serial.print(tagDB[index].name);
+}
 
