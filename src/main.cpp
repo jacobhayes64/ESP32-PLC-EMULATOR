@@ -21,12 +21,16 @@ bool inputState[4];
 bool outputState[4];
 
 #endif
-void logicsolve(void);
 void inputscan(int[]);
 void outputscan(int[]);
 
+void testPopulateTag(tag*);
+void printTag(vector<tag>,int);
+void printRung(vector<rungcontext>,int);
+
 class tag{
   public:
+  int id;
   char name[64];
   char type[4];
   int intValue;
@@ -36,50 +40,62 @@ class tag{
 
 };
 
-void testPopulateTag(tag*);
-void printTag(vector<tag>,int);
-
 class rungcontext{
   public:
-  bool rungPower;
-  int tags[8];
-  double nowMs;
+  int id;
+  bool rungPower = 1;
+  long nowMs;
 
 };
 
-// class XIO {
-//   public:
-//   int tagindex;
-//   bool state;
+class XIO {
+  public:
+  int tagindex;
+  int rungindex;
+  bool state;
 
-//   bool eval(rungcontext& rung){
-//     if(this->state==0){
-//       rung.rungPower = 1;
-//     }else{rung.rungPower = 0;}
-//     }
-// };
+  void eval(vector<rungcontext> *rungDB, vector<tag> *tagDB){
+    if ((*tagDB)[this->tagindex].boolValue==0){
+      (*rungDB)[this->rungindex].rungPower = 1;
+      this->state = 1;
+    }else{(*rungDB)[this->rungindex].rungPower = 0;
+      this->state = 0;
+    }
+  }
+};
 
-// class XIC {
-//   public:
-//   int tagindex;
+class XIC {
+  public:
+  int tagindex;
+  int rungindex;
+  bool state;
 
-//   bool eval(rungcontext *rung){
-//     if(this->tag==1){
-//       rung->rungPower = 1;
-//     }else{rung->rungPower = 0;}
-//     }
-// };
+  void eval(vector<rungcontext> *rungDB, vector<tag> *tagDB){
+    if ((*tagDB)[this->tagindex].boolValue==1){
+      (*rungDB)[this->rungindex].rungPower = 1;
+      this->state = 1;
+    }else{(*rungDB)[this->rungindex].rungPower = 0;
+      this->state = 0;
+    }
+  }
+};
 
-// class OTE {
-//   public:
-//   int tag;
 
-//   bool eval(rungcontext rung){
-//   if(rung.rungPower=1){
-//     this->tag=1;
-//   }else{this->tag=0;}
-//     }
-// };
+class OTE {
+  public:
+  int tagindex;
+  int rungindex;
+  bool state;
+
+  void eval(vector<rungcontext> *rungDB, vector<tag> *tagDB){
+    if ((*rungDB)[this->tagindex].rungPower==1){
+      (*tagDB)[this->rungindex].boolValue = 1;
+      this->state = 1;
+    }else{(*tagDB)[this->rungindex].boolValue = 0;
+      this->state = 0;
+    }
+  }
+};
 
 
 void setup() {
@@ -87,7 +103,7 @@ Serial.begin(115200);
 void testPopulateTag(tag*);
 void printTag(vector<tag>,int);
 
-  rungcontext rung0;
+  
   pinMode(LED_BUILTIN, OUTPUT);
   pinMode(INPUT_PIN1, INPUT);
   pinMode(INPUT_PIN2, INPUT);
@@ -99,9 +115,12 @@ void printTag(vector<tag>,int);
   pinMode(OUTPUT_PIN3, OUTPUT);
   pinMode(OUTPUT_PIN4, OUTPUT);
   Serial.print("Startup");
+  vector<rungcontext> rungDB;
   vector<tag> tagDB;
+  rungcontext R0;
   tag T0;
   testPopulateTag(&T0);
+  rungDB.push_back(R0);
   tagDB.push_back(T0);
   printTag(tagDB, 0);
 }
@@ -140,6 +159,11 @@ for(int i=0; i<4; i++){
 
 }
 
+
+
+
+
+
 void testPopulateTag(tag *t){
   strcpy(t->name, "Testing Name");
   strcpy(t->type, "BOOL");
@@ -152,3 +176,7 @@ void printTag(vector<tag> tagDB, int index){
 Serial.print(tagDB[index].name);
 }
 
+void printRung(vector<rungcontext> rungDB,int index){
+Serial.print(rungDB[index].rungPower);
+
+}
