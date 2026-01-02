@@ -24,10 +24,6 @@ bool outputState[4];
 void inputscan(int[]);
 void outputscan(int[]);
 
-void testPopulateTag(tag*);
-void printTag(vector<tag>,int);
-void printRung(vector<rungcontext>,int);
-
 class tag{
   public:
   int id;
@@ -39,6 +35,7 @@ class tag{
   double douValue;
 
 };
+
 
 class rungcontext{
   public:
@@ -98,11 +95,21 @@ class OTE {
 };
 
 
-void setup() {
-Serial.begin(115200);
+
+void intializeDcard(vector<tag> *);
+
+void testPopulateTag(tag*);
+void printTag(vector<tag>,int);
+void printRung(vector<rungcontext>,int);
 void testPopulateTag(tag*);
 void printTag(vector<tag>,int);
 
+void setup() {
+Serial.begin(115200);
+
+
+vector<rungcontext> rungDB;
+vector<tag> tagDB;
   
   pinMode(LED_BUILTIN, OUTPUT);
   pinMode(INPUT_PIN1, INPUT);
@@ -115,14 +122,21 @@ void printTag(vector<tag>,int);
   pinMode(OUTPUT_PIN3, OUTPUT);
   pinMode(OUTPUT_PIN4, OUTPUT);
   Serial.print("Startup");
-  vector<rungcontext> rungDB;
-  vector<tag> tagDB;
+  intializeDcard(&tagDB);
   rungcontext R0;
   tag T0;
   testPopulateTag(&T0);
   rungDB.push_back(R0);
   tagDB.push_back(T0);
   printTag(tagDB, 0);
+  printTag(tagDB, 1);
+  printTag(tagDB, 2);
+  printTag(tagDB, 3);
+  printTag(tagDB, 4);
+  printTag(tagDB, 5);
+  printTag(tagDB, 6);
+  printTag(tagDB, 7);
+  printTag(tagDB, 8);
 }
 
 void loop() {
@@ -154,14 +168,8 @@ for(int i=0; i<4; i++){
     digitalWrite(pins[i],LOW);
    // printf("\nSet Output %d State to LOW", i);
   }
-
 }
-
 }
-
-
-
-
 
 
 void testPopulateTag(tag *t){
@@ -180,3 +188,19 @@ void printRung(vector<rungcontext> rungDB,int index){
 Serial.print(rungDB[index].rungPower);
 
 }
+
+void intializeDcard(std::vector<tag>* tagDB){
+  int base = tagDB ->size();
+  for (int i = 0+base; i < 8+base; ++i) tagDB->emplace_back();
+  char tempDO[64] = {'D','O','0','\0'};
+  char tempDI[64] = {'D','I','0','\0'};
+
+    for (int i = 0+base; i+base < 4; ++i){
+    tempDO[2] = char('0' + i);
+    strcpy((*tagDB)[i].name, tempDO);
+
+    tempDI[2] = char('0' + i);
+    strcpy((*tagDB)[i + 4].name, tempDI);
+    }
+}
+
